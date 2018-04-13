@@ -21,6 +21,7 @@ import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.support.annotation.IntDef;
 import android.support.annotation.WorkerThread;
+import android.widget.Toast;
 
 import com.googlecode.leptonica.android.Pix;
 import com.googlecode.leptonica.android.Pixa;
@@ -318,6 +319,7 @@ public class TessBaseAPI {
     public boolean init(String datapath, String language, @OcrEngineMode int ocrEngineMode) {
         if (datapath == null)
             throw new IllegalArgumentException("Data path must not be null!");
+
         if (!datapath.endsWith(File.separator))
             datapath += File.separator;
 

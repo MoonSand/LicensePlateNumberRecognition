@@ -17,8 +17,8 @@ public class HistoryActivity extends AppCompatActivity{
     private List<Map<String,Object>> lists;
     private SimpleAdapter adapter;
     private ListView listView;
-    private String[] content ={"渝C 12345","京B 12345"};
-    private String[] time={"30/3/2018","29/3/2018"};
+    public String[] content ={"渝C 12345","京B 12345"};
+    public String[] time={"30/3/2018","29/3/2018"};
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);

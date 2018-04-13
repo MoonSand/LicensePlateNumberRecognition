@@ -1,8 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal">
+
+    <SurfaceView
+        android:id="@+id/cameraview"
+        android:layout_width="523dp"
+        android:layout_height="360dp"
+         />
+
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="76dp"
+        android:layout_height="129dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="90dp"
+        android:onClick="btnClick_scan"
+        android:text="scan"
+        tools:layout_editor_absoluteX="252dp"
+        tools:layout_editor_absoluteY="5dp" />
 
 
 
-</android.support.constraint.ConstraintLayout>
+
+
+</LinearLayout>
