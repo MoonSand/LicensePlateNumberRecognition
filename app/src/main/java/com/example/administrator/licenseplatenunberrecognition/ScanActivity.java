@@ -42,6 +42,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -57,7 +59,7 @@ import android.hardware.Camera.Size;
 public class ScanActivity extends AppCompatActivity {
     private TessBaseAPI  tessBaseAPI;
     private  Bitmap bitmap=null;
-    private Bitmap prebitmap=null;
+
     private String result;
     private boolean finish=false;
     private SurfaceView cameraview_id;
@@ -66,6 +68,7 @@ public class ScanActivity extends AppCompatActivity {
     private Runnable doAutoFocus;
     int PreviewWidth = 0;
     int PreviewHeight = 0;
+    String strName=null;
     private static final String DATAPATH = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator+"Tessract"+File.separator;
     private static final String tessdata = DATAPATH + "tessdata"+ File.separator;
     private static final String input=DATAPATH+"input"+File.separator;
@@ -151,10 +154,8 @@ public class ScanActivity extends AppCompatActivity {
                 //设置每秒30栈
                 parameters.setPreviewFrameRate(30);
                 //设置照片的格式
-                parameters.setPreviewFormat(PixelFormat.JPEG);
-
+                //parameters.setPreviewFormat(PixelFormat.JPEG);
                 parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
-
                     // 选择合适的预览尺寸
 //                    List<Camera.Size> sizeList = parameters.getSupportedPreviewSizes();
 //                    // 如果sizeList只有一个我们也没有必要做什么了，因为就他一个别无选择
@@ -173,15 +174,13 @@ public class ScanActivity extends AppCompatActivity {
 //                    parameters.setPictureSize(PreviewWidth,PreviewHeight);
 
                     //设置照片的质量
-                    parameters.set("jpeg-quality", 100);
+                    parameters.set("jpeg-quality", 85);
 
-                //parameters.setPictureSize(2160,1080);
+                //parameters.setPictureSize(1080,2160);
                 //camera.setDisplayOrientation(90);
 
                     // 给照相机设置参数
-               // camera.setParameters(parameters);
-
-                //将画面展示到SurfaceView
+               //camera.setParameters(parameters);
                     try {
                         camera.setPreviewDisplay(cameraview_id.getHolder());
                         //开启预览
@@ -233,38 +232,25 @@ public class ScanActivity extends AppCompatActivity {
                 });
 
         try {
-
-           // FileInputStream fs=new FileInputStream(input+"p19.png");
-
-           // Bitmap bitmap1 = BitmapFactory.decodeStream(fs);
-           // bitmap=bitmap1;   clearImageHelper.cleanImage(prebitmap)
-           // clearImageHelper.cleanImage();
-//            tessBaseAPI.setImage(prebitmap );
-//            result = tessBaseAPI.getUTF8Text();
+            clearImageHelper.cleanImage(strName);
+            FileInputStream fs=new FileInputStream(output+strName+".jpg");
+            bitmap= BitmapFactory.decodeStream(fs);
+            tessBaseAPI.setImage(bitmap);
+            result = tessBaseAPI.getUTF8Text();
         }catch(IllegalStateException e) {
             e.printStackTrace();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-        // Log.i("ttt",result);
         tessBaseAPI.end();
         finish=true;
             }
         }).start();
 
-        SystemClock.sleep(1000);
-//        if(bitmap != null && !bitmap.isRecycled()){
-//            bitmap.recycle();
-//            bitmap = null;
-//        }
-//        System.gc();
-//        prebitmap.recycle();
-//        prebitmap=null;
-
-        //content.add
+        //SystemClock.sleep(1000);
 
     }
 
@@ -272,45 +258,12 @@ public class ScanActivity extends AppCompatActivity {
 
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
-//            byte[] rawImage;
-//            ByteArrayOutputStream baos;
-//            Camera.Size previewSize = camera.getParameters().getPreviewSize();//获取尺寸,格式转换的时候要用到
-//            BitmapFactory.Options newOpts = new BitmapFactory.Options();
-//            newOpts.inJustDecodeBounds = true;
-//            YuvImage yuvimage = new YuvImage(
-//                    data,
-//                    ImageFormat.NV21,
-//                    previewSize.width,
-//                    previewSize.height,
-//                    null);
-//            baos = new ByteArrayOutputStream();
-//            yuvimage.compressToJpeg(new Rect(0, 0, previewSize.width, previewSize.height), 100, baos);// 80--JPG图片的质量[0-100],100最高
-//            rawImage = baos.toByteArray();
-//            //将rawImage转换成bitmap
-//            BitmapFactory.Options options = new BitmapFactory.Options();
-//            options.inPreferredConfig = Bitmap.Config.RGB_565;
-//            prebitmap = BitmapFactory.decodeByteArray(rawImage, 0, rawImage.length, options);
-            // data为完整数据
-           // prebitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-//            Camera.Size size = camera.getParameters().getPreviewSize();
-//            YuvImage image = new YuvImage(data, ImageFormat.NV21, size.width, size.height, null);
-//            if (image != null) {
-//                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//
-//                image.compressToJpeg(new Rect(0, 0, size.width, size.height), 100, stream);
-//                Matrix matrix = new Matrix();
-//                matrix.setRotate(90);
-//                Bitmap newBitmap = BitmapFactory.decodeByteArray(stream.toByteArray(), 0, stream.size());
-//               prebitmap = Bitmap.createBitmap(newBitmap, 0, 0,
-//                       newBitmap.getWidth(), newBitmap.getHeight(), matrix, true);
-//            }
-            //旋转角度，保证保存的图片方向是对的
-//            Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-//            Matrix matrix = new Matrix();
-//            matrix.setRotate(90);
-//            prebitmap = Bitmap.createBitmap(bitmap, 0, 0,
-//                    bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-             File file = new File(input+"a.jpg");
+
+            SimpleDateFormat format=new SimpleDateFormat("ddHHmmss");
+            Date date=new Date();
+            strName=format.format(date);
+
+             File file = new File(input+strName+".jpg");
                //  使用流进行读写
             try {
                 FileOutputStream fos = new FileOutputStream(file);
@@ -327,7 +280,6 @@ public class ScanActivity extends AppCompatActivity {
 
                 e.printStackTrace();
             }
-
         }
 
 
@@ -363,10 +315,8 @@ public class ScanActivity extends AppCompatActivity {
                     try {
                         out.close();
                     } catch (IOException e) {
-
                 }
                 }
-
             }
         }
     }
@@ -386,29 +336,23 @@ public class ScanActivity extends AppCompatActivity {
          *
          * @throws IOException
          */
-        public  Bitmap cleanImage()
+        public  void cleanImage(String name)
                 throws IOException
         {
+            Bitmap bitmap1=null;
 
-
-           // Bitmap bitmap1=null;
-            //File destF = new File(destDir);
-//            if (!destF.exists())
-//            {
-//                destF.mkdirs();
-//            }
-//            String srcFile=input+name;
-//            FileInputStream fs=new FileInputStream(srcFile);
-            //BitmapFactory.Options options=new BitmapFactory.Options();
-           // bitmap1 = BitmapFactory.decodeStream(fs);
-            int width=prebitmap.getWidth();
-            int height=prebitmap.getHeight();
+            String srcFile=input+name+".jgp";
+            FileInputStream fs=new FileInputStream(srcFile);
+           // BitmapFactory.Options options=new BitmapFactory.Options();
+            bitmap1 = BitmapFactory.decodeStream(fs);
+            int width=bitmap1.getWidth();
+            int height=bitmap1.getHeight();
 
             int[] pixels = new int[width * height]; // 通过位图的大小创建像素点数组
             // 设定二值化的域值，默认值为100
-            //tmp = 180;
-            prebitmap.getPixels(pixels, 0, width, 0, 0, width, height);
-            int alpha = 0xFF << 24,tmp=127;
+
+            bitmap1.getPixels(pixels, 0, width, 0, 0, width, height);
+            int alpha = 0xFF << 24,  tmp=127;
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < width; j++) {
                     int grey = pixels[width * i + j];
@@ -446,29 +390,29 @@ public class ScanActivity extends AppCompatActivity {
             // 设置图片数据
             newBmp.setPixels(pixels, 0, width, 0, 0, width, height);
             Bitmap resizeBmp = ThumbnailUtils.extractThumbnail(newBmp, width, height);
-           return resizeBmp;
-           // 保存bitmap到本地
-//            File file = new File(output+"p19.png");
-//            if(file.exists()){
-//                file.delete();
-//            }
-//            FileOutputStream out;
-//            try{
-//                out = new FileOutputStream(file);
-//                if(resizeBmp.compress(Bitmap.CompressFormat.PNG, 90, out))
-//                {
-//                    out.flush();
-//                    out.close();
-//                }
-//            }
-//            catch (FileNotFoundException e)
-//            {
-//                e.printStackTrace();
-//            }
-//            catch (IOException e)
-//            {
-//                e.printStackTrace();
-//            }
+
+            //保存bitmap到本地
+            File file = new File(output+name+".jpg");
+            if(file.exists()){
+                file.delete();
+            }
+            FileOutputStream out;
+            try{
+                out = new FileOutputStream(file);
+                if(resizeBmp.compress(Bitmap.CompressFormat.JPEG, 90, out))
+                {
+                    out.flush();
+                    out.close();
+                }
+            }
+            catch (FileNotFoundException e)
+            {
+                e.printStackTrace();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
        }
     }
 
